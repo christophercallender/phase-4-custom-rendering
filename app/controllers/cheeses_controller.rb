@@ -1,15 +1,17 @@
 class CheesesController < ApplicationController
-
-  # GET /cheeses
   def index
-    cheeses = Cheese.all
-    render json: cheeses
+    render json: Cheese.all
   end
 
-  # GET /cheeses/:id
   def show
     cheese = Cheese.find_by(id: params[:id])
-    render json: cheese
+    if cheese
+      render json: cheese,
+             only: %i[id name price is_best_seller],
+             except: %i[created_at updated_at],
+             methods: [:summary]
+    else
+      render json: { error: "No cheeses found" }, status: :not_found
+    end
   end
-
 end
